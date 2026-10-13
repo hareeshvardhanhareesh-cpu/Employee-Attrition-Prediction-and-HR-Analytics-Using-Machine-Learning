@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetainAI • Enterprise Employee Attrition Prediction & HR Analytics</title>
+  <meta name="description" content="State-of-the-art Employee Attrition Prediction and HR Analytics platform powered by Machine Learning. Real-time flight risk scoring, what-if retention simulator, and executive workforce insights.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN for Dynamic Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Ambient Backdrop Glow -->
+  <div class="ambient-glow"></div>
+
+  <!-- Main Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="brand-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>RetainAI Enterprise</h1>
+          <div class="brand-tagline">
+            <span>Employee Attrition Prediction & HR Analytics</span>
+            <span class="model-badge">
+              <span class="pulse-dot"></span> ML Model v2.4 Active
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="action-btn-pill" onclick="window.print()">
+          <i data-lucide="printer" style="width:15px; height:15px;"></i>
+          <span>Print / Export</span>
+        </button>
+        <button class="action-btn-pill primary" onclick="document.querySelector('[data-tab=predictor]').click()">
+          <i data-lucide="sparkles" style="width:15px; height:15px;"></i>
+          <span>Predict Attrition</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs-wrapper">
+    <nav class="nav-tabs" role="tablist">
+      <button class="tab-btn active" data-tab="predictor" role="tab" id="tab-btn-predictor">
+        <i data-lucide="cpu"></i>
+        <span>Attrition Predictor & Simulator</span>
+      </button>
+      <button class="tab-btn" data-tab="dashboard" role="tab" id="tab-btn-dashboard">
+        <i data-lucide="bar-chart-3"></i>
+        <span>Executive HR Dashboard</span>
+      </button>
+      <button class="tab-btn" data-tab="roster" role="tab" id="tab-btn-roster">
+        <i data-lucide="users"></i>
+        <span>Workforce Risk Roster</span>
+      </button>
+      <button class="tab-btn" data-tab="batch" role="tab" id="tab-btn-batch">
+        <i data-lucide="file-spreadsheet"></i>
+        <span>Batch CSV & Model Evaluation</span>
+      </button>
+    </nav>
+
+    <div class="quick-meta">
+      <div class="meta-pill">
+        <i data-lucide="database" style="width:14px; height:14px; color:#818cf8;"></i>
+        <span>IBM HR Dataset Standard</span>
+      </div>
+      <div class="meta-pill">
+        <i data-lucide="shield-check" style="width:14px; height:14px; color:#10b981;"></i>
+        <span>ROC-AUC: 0.914</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+
+    <!-- KPI Metric Summary Row (Visible Across Tabs) -->
+    <section class="kpi-grid" aria-label="Key Performance Indicators">
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Workforce</span>
+          <div class="kpi-icon">
+            <i data-lucide="users" style="width:18px; height:18px;"></i>
+          </div>
+        </div>
+        <div class="kpi-value">1,470</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend down"><i data-lucide="trending-up" style="width:14px; height:14px;"></i> +4.2%</span>
+          <span>headcount growth YoY</span>
+        </div>
+      </div>
+
+      <div class="kpi-card risk-kpi">
+        <div class="kpi-header">
+          <span class="kpi-title">Workforce Attrition Rate</span>
+          <div class="kpi-icon">
+            <i data-lucide="user-minus" style="width:18px; height:18px;"></i>
+          </div>
+        </div>
+        <div class="kpi-value" style="color: #f87171;">16.1%</div>
+        <div class="kpi-footer">
+          <span class="kpi-trend up"><i data-lucide="alert-triangle" style="width:14px; height:14px;"></i> +1.8%</span>
+          <span>above tech industry avg</span>
+        </div>
+      </div>
+
+      <div class="kpi-card cost-kpi">
+        <div class="kpi-header">
+          <span class="kpi-title">High Flight-Risk Talent</span>
+          <div class="kpi-icon">
+            <i data-lucide="flame" style="width:18px; height:18px;"></i>
+          </div>
+        </div>
+        <div class="kpi-value" style="color: #fbbf24;">184</div>
+        <div class="kpi-footer">
+          <span>Immediate intervention suggested</span>
+        </div>
+      </div>
+
+      <div class="kpi-card safe-kpi">
+        <div class="kpi-header">
+          <span class="kpi-title">Est. Attrition Cost at Risk</span>
+          <div class="kpi-icon">
+            <i data-lucide="dollar-sign" style="width:18px; height:18px;"></i>
+          </div>
+        </div>
+        <div class="kpi-value" style="color: #34d399;">$2.4M</div>
+        <div class="kpi-footer">
+          <span>Replacement & recruiting impact</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: Single Predictor & What-If Simulator -->
+    <div id="tab-predictor" class="tab-panel active" role="tabpanel">
+      
+      <!-- Preset Personas Quick Load -->
+      <div class="glass-card persona-selector">
+        <div class="card-header-clean">
+          <div>
+            <h3>
+              <i data-lucide="user-check" style="color:#6366f1; width:20px; height:20px;"></i>
+              Quick-Load Employee Profiles (Persona Benchmarks)
+            </h3>
+            <p class="header-desc">Click any archetype to inspect how Machine Learning evaluates different flight risk profiles</p>
+          </div>
+        </div>
+        <div class="persona-chips">
+          <button type="button" class="persona-chip danger active" data-persona="sarah">
+            <span class="chip-dot"></span>
+            <span>Sarah Jenkins (DevOps • Burnt Out & Underpaid)</span>
+          </button>
+          <button type="button" class="persona-chip danger" data-persona="kevin">
+            <span class="chip-dot"></span>
+            <span>Kevin Patel (Inside Sales • Heavy Travel & Low Pay)</span>
+          </button>
+          <button type="button" class="persona-chip success" data-persona="elena">
+            <span class="chip-dot"></span>
+            <span>Dr. Elena Rostova (Research Director • Highly Retained)</span>
+          </button>
+          <button type="button" class="persona-chip warning" data-persona="priya">
+            <span class="chip-dot"></span>
+            <span>Priya Nair (HR Generalist • Promotion Overdue)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Predictor Grid Layout -->
+      <div class="predictor-layout">
+        
+        <!-- Left: Input Form & Simulator -->
+        <div class="glass-card">
+          <div class="card-header-clean">
+            <div>
+              <h3>
+                <i data-lucide="sliders" style="color:#818cf8; width:20px; height:20px;"></i>
+                Employee Parameters & Workplace Factors
+              </h3>
+              <p class="header-desc">Adjust any parameter to evaluate real-time probability of attrition</p>
+            </div>
+          </div>
+
+          <form id="attrition-form">
+            
+            <!-- Section 1: Role & Demographics -->
+            <div class="form-section-title">
+              <i data-lucide="briefcase" style="width:14px; height:14px;"></i>
+              1. Job Role & Demographics
+            </div>
+            <div class="form-grid">
+              <div class="input-group">
+                <label class="input-label" for="age">
+                  Age <span class="val-display" id="val-age">31</span>
+                </label>
+                <input type="range" class="form-slider" id="age" min="18" max="65" value="31">
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="department">Department</label>
+                <select class="form-select" id="department">
+                  <option value="Research & Development">Research & Development</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Human Resources">Human Resources</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="jobRole">Job Role</label>
+                <select class="form-select" id="jobRole">
+                  <option value="Research Scientist">Research Scientist</option>
+                  <option value="Laboratory Technician">Laboratory Technician</option>
+                  <option value="Sales Representative">Sales Representative</option>
+                  <option value="Sales Executive">Sales Executive</option>
+                  <option value="Healthcare Representative">Healthcare Representative</option>
+                  <option value="Manufacturing Director">Manufacturing Director</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Research Director">Research Director</option>
+                  <option value="Human Resources">Human Resources</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="jobLevel">Job Level (1 - 5)</label>
+                <select class="form-select" id="jobLevel">
+                  <option value="1">Level 1 (Entry / Associate)</option>
+                  <option value="2">Level 2 (Mid-Level)</option>
+                  <option value="3" selected>Level 3 (Senior / Lead)</option>
+                  <option value="4">Level 4 (Principal / Staff)</option>
+                  <option value="5">Level 5 (Director / Executive)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Section 2: Working Conditions & Commute -->
+            <div class="form-section-title">
+              <i data-lucide="clock" style="width:14px; height:14px;"></i>
+              2. Working Conditions & Travel
+            </div>
+            <div class="form-grid">
+              <div class="input-group">
+                <label class="input-label" for="businessTravel">Business Travel</label>
+                <select class="form-select" id="businessTravel">
+                  <option value="Non-Travel">Non-Travel (0% travel)</option>
+                  <option value="Travel_Rarely">Travel Rarely (1-2 trips/yr)</option>
+                  <option value="Travel_Frequently" selected>Travel Frequently (Monthly+)</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="distanceFromHome">
+                  Commute Distance <span class="val-display" id="val-distanceFromHome">22 mi</span>
+                </label>
+                <input type="range" class="form-slider" id="distanceFromHome" min="1" max="35" value="22">
+              </div>
+
+              <div class="input-group" style="grid-column: span 2;">
+                <div class="toggle-switch-wrapper">
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.85rem; color:#fff;">Overtime Required?</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">
+                      Mandatory overtime is the #1 statistical predictor of voluntary resignation
+                    </div>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="overTime" checked>
+                    <span class="slider-toggle"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: Sentiment & Well-being -->
+            <div class="form-section-title">
+              <i data-lucide="smile" style="width:14px; height:14px;"></i>
+              3. Sentiment & Satisfaction (Survey 1 to 4)
+            </div>
+            <div class="form-grid">
+              <div class="input-group">
+                <label class="input-label" for="jobSatisfaction">
+                  Job Satisfaction <span class="val-display" id="val-jobSatisfaction">1</span>/4
+                </label>
+                <input type="range" class="form-slider" id="jobSatisfaction" min="1" max="4" value="1">
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="environmentSatisfaction">
+                  Work Environment <span class="val-display" id="val-environmentSatisfaction">2</span>/4
+                </label>
+                <input type="range" class="form-slider" id="environmentSatisfaction" min="1" max="4" value="2">
+              </div>
+
+              <div class="input-group" style="grid-column: span 2;">
+                <label class="input-label" for="workLifeBalance">
+                  Work-Life Balance <span class="val-display" id="val-workLifeBalance">1</span>/4
+                </label>
+                <input type="range" class="form-slider" id="workLifeBalance" min="1" max="4" value="1">
+              </div>
+            </div>
+
+            <!-- Section 4: Compensation & Progression -->
+            <div class="form-section-title">
+              <i data-lucide="trending-up" style="width:14px; height:14px;"></i>
+              4. Compensation & Career Velocity
+            </div>
+            <div class="form-grid">
+              <div class="input-group" style="grid-column: span 2;">
+                <label class="input-label" for="monthlyIncome">
+                  Monthly Base Salary <span class="val-display" id="val-monthlyIncome">$6,200</span>
+                </label>
+                <input type="range" class="form-slider" id="monthlyIncome" min="1500" max="20000" step="100" value="6200">
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="yearsAtCompany">
+                  Tenure at Company <span class="val-display" id="val-yearsAtCompany">4 yrs</span>
+                </label>
+                <input type="range" class="form-slider" id="yearsAtCompany" min="0" max="30" value="4">
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="yearsSinceLastPromotion">
+                  Years Since Last Promotion <span class="val-display" id="val-yearsSinceLastPromotion">4 yrs</span>
+                </label>
+                <input type="range" class="form-slider" id="yearsSinceLastPromotion" min="0" max="15" value="4">
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="yearsWithCurrManager">
+                  Years with Current Manager <span class="val-display" id="val-yearsWithCurrManager">0 yrs</span>
+                </label>
+                <input type="range" class="form-slider" id="yearsWithCurrManager" min="0" max="15" value="0">
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="stockOptionLevel">Stock Option Tier (0 - 3)</label>
+                <select class="form-select" id="stockOptionLevel">
+                  <option value="0">Level 0 (No Equity)</option>
+                  <option value="1">Level 1 (Standard Grant)</option>
+                  <option value="2">Level 2 (Executive Grant)</option>
+                  <option value="3">Level 3 (Max Incentive)</option>
+                </select>
+              </div>
+
+              <input type="hidden" id="maritalStatus" value="Single">
+            </div>
+
+            <button type="submit" class="btn-predict" id="btn-run-prediction">
+              <i data-lucide="zap" style="width:18px; height:18px;"></i>
+              Run Machine Learning Inference
+            </button>
+          </form>
+
+          <!-- What-If Scenario Simulator Box -->
+          <div class="simulator-container">
+            <div class="simulator-header" id="simulator-toggle-header" style="cursor:pointer;" title="Click to toggle Interactive Sandbox">
+              <div>
+                <h4 style="font-size:0.95rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:0.4rem;">
+                  <i data-lucide="sparkles" style="color:#06b6d4; width:16px; height:16px;"></i>
+                  What-If Scenario & Retention Simulator
+                </h4>
+                <p style="font-size:0.775rem; color:var(--text-muted); margin-top:2px;">
+                  Simulate counter-factual HR retention actions in real time
+                </p>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <span class="simulator-badge">Interactive Sandbox</span>
+                <button type="button" class="btn-icon-subtle" id="btn-toggle-sandbox" aria-label="Toggle Sandbox Simulator">
+                  <i data-lucide="chevron-up" id="icon-sandbox-toggle" style="width:16px; height:16px;"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="simulator-body">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:0.85rem 1rem; border-radius:8px; margin-bottom:1rem; border:1px solid rgba(255,255,255,0.05);">
+                <div>
+                  <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">Current Baseline Risk</div>
+                  <div style="font-size:1.3rem; font-weight:800; font-family:var(--font-display); color:#f87171;" id="sim-current-prob">78%</div>
+                </div>
+                <div style="text-align:center;">
+                  <span id="sim-delta-badge" style="display:inline-block; font-size:0.75rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:999px; background:rgba(16,185,129,0.2); color:#34d399;">
+                    0% change
+                  </span>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">Simulated Risk</div>
+                  <div style="font-size:1.3rem; font-weight:800; font-family:var(--font-display); color:#34d399;" id="sim-projected-prob">78%</div>
+                </div>
+              </div>
+
+              <div class="sim-slider-row">
+                <label class="input-label" for="sim-salary-boost">
+                  <span>Simulate Salary Increase</span>
+                  <span class="val-display" id="sim-salary-val">+0%</span>
+                </label>
+                <input type="range" class="form-slider" id="sim-salary-boost" min="0" max="40" step="5" value="0">
+              </div>
+
+              <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.6rem; margin-top:0.85rem;">
+                <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.775rem; color:#e2e8f0; cursor:pointer;">
+                  <input type="checkbox" id="sim-eliminate-ot">
+                  <span>Eliminate Overtime</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.775rem; color:#e2e8f0; cursor:pointer;">
+                  <input type="checkbox" id="sim-wlb-boost">
+                  <span>Hybrid Flex Schedule</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.775rem; color:#e2e8f0; cursor:pointer;">
+                  <input type="checkbox" id="sim-promote">
+                  <span>Instant Promotion</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Prediction Output Card -->
+        <aside class="prediction-results-card" aria-label="Machine Learning Prediction Output">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+            <div style="font-size:0.775rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; color:var(--text-muted);">
+              Inference Result
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-dim); display:flex; align-items:center; gap:0.3rem;">
+              <i data-lucide="shield-alert" style="width:13px; height:13px;"></i>
+              <span>Calibrated Ensemble</span>
+            </div>
+          </div>
+
+          <!-- Animated Speedometer / Radial Arc Gauge -->
+          <div class="gauge-section">
+            <div class="gauge-svg-container">
+              <svg class="gauge-svg" viewBox="0 0 200 110">
+                <path class="gauge-bg-path" d="M 20 100 A 80 80 0 0 1 180 100" />
+                <path class="gauge-progress-path" id="gauge-progress-arc" d="M 20 100 A 80 80 0 0 1 180 100"
+                  stroke-dasharray="283"
+                  stroke-dashoffset="60"
+                  stroke="#ef4444"
+                />
+              </svg>
+              <div class="gauge-score-center">
+                <div class="gauge-score-num" id="gauge-score-value">78%</div>
+                <div class="gauge-score-label">Flight Probability</div>
+              </div>
+            </div>
+
+            <div class="risk-badge-large critical" id="risk-tier-badge">
+              Critical Risk
+            </div>
+          </div>
+
+          <!-- Quick Metrics Bar -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-top:1.25rem; background:rgba(0,0,0,0.3); padding:0.85rem; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+            <div>
+              <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase;">Model Confidence</div>
+              <div style="font-size:1.1rem; font-weight:700; color:#fff;" id="confidence-val">91.4%</div>
+            </div>
+            <div>
+              <div style="font-size:0.7rem; color:var(--text-dim); text-transform:uppercase;">Replacement Cost</div>
+              <div style="font-size:1.1rem; font-weight:700; color:#f87171;" id="replacement-cost-val">$40,300</div>
+            </div>
+          </div>
+
+          <!-- Contributing Drivers Breakdown (SHAP-style) -->
+          <div class="drivers-breakdown">
+            <div class="drivers-title">
+              <span>Top Flight Risk Drivers</span>
+              <span style="font-size:0.7rem; color:var(--primary-light);">Feature Impact</span>
+            </div>
+            <div id="drivers-list">
+              <!-- Populated dynamically by app.js -->
+            </div>
+          </div>
+
+          <!-- Tailored Retention Action Checklist -->
+          <div class="recommendations-box">
+            <div class="rec-title">
+              <i data-lucide="check-circle" style="width:16px; height:16px;"></i>
+              <span>Prescriptive Retention Interventions</span>
+            </div>
+            <ul class="rec-list" id="recommendations-list">
+              <!-- Populated dynamically by app.js -->
+            </ul>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: Executive HR Analytics Dashboard -->
+    <div id="tab-dashboard" class="tab-panel" role="tabpanel">
+      <div class="card-header-clean" style="margin-bottom:1.5rem;">
+        <div>
+          <h2>Workforce Analytics & Strategic Attrition Insights</h2>
+          <p class="header-desc">Aggregated demographic, satisfaction, and flight risk benchmarks across 1,470 employees</p>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="action-btn-pill" onclick="window.print()">
+            <i data-lucide="download" style="width:14px; height:14px;"></i>
+            <span>Export Dashboard Report</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2x2 Charts Grid -->
+      <div class="charts-grid-2col">
+        
+        <!-- Chart 1: Department Attrition -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title-group">
+              <h4>Attrition Rate by Business Department</h4>
+              <p>Sales and HR demonstrate significantly elevated turnover rates</p>
+            </div>
+            <i data-lucide="pie-chart" style="color:var(--text-dim); width:18px; height:18px;"></i>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="deptAttritionChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Overtime Impact -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title-group">
+              <h4>Overtime vs Flight Risk Distribution</h4>
+              <p>Employees working overtime exhibit 3x higher probability of departure</p>
+            </div>
+            <i data-lucide="clock" style="color:var(--text-dim); width:18px; height:18px;"></i>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="overtimeChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 3: Attrition by Job Role -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title-group">
+              <h4>Flight Risk Index by Job Role</h4>
+              <p>Entry-level sales reps and lab technicians experience greatest vulnerability</p>
+            </div>
+            <i data-lucide="briefcase" style="color:var(--text-dim); width:18px; height:18px;"></i>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="roleRiskChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 4: Machine Learning Feature Weights -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title-group">
+              <h4>Machine Learning Feature Importance Ranking</h4>
+              <p>Trained weights from calibrated logistic regression and tree ensembles</p>
+            </div>
+            <i data-lucide="bar-chart-2" style="color:var(--text-dim); width:18px; height:18px;"></i>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="featureImportanceChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: Workforce Risk Roster -->
+    <div id="tab-roster" class="tab-panel" role="tabpanel">
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div>
+            <h2>Workforce Talent Risk Directory</h2>
+            <p class="header-desc">Search, filter, and drill into individual employee attrition vulnerability scores</p>
+          </div>
+          <span class="meta-pill" id="table-records-count">30 Employees</span>
+        </div>
+
+        <!-- Filter Controls Bar -->
+        <div class="filter-bar">
+          <div class="search-input-wrapper">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="table-search" class="search-input" placeholder="Search by name, employee ID, or role..." aria-label="Search employees">
+          </div>
+
+          <div class="filter-group">
+            <select id="filter-dept" class="filter-select" aria-label="Filter by department">
+              <option value="all">All Departments</option>
+              <option value="Research & Development">Research & Development</option>
+              <option value="Sales">Sales</option>
+              <option value="Human Resources">Human Resources</option>
+            </select>
+
+            <select id="filter-risk" class="filter-select" aria-label="Filter by risk tier">
+              <option value="all">All Risk Levels</option>
+              <option value="critical">Critical Risk (75%+)</option>
+              <option value="high">High Risk (50-74%)</option>
+              <option value="moderate">Moderate Risk (25-49%)</option>
+              <option value="low">Low Risk (< 25%)</option>
+            </select>
+
+            <select id="filter-ot" class="filter-select" aria-label="Filter by overtime">
+              <option value="all">Overtime (All)</option>
+              <option value="Yes">Overtime Required</option>
+              <option value="No">Standard Hours</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="data-table" id="employees-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="name">Employee <span class="sort-icon" id="sort-icon-name">↕</span></th>
+                <th class="sortable" data-sort="role">Role <span class="sort-icon" id="sort-icon-role">↕</span></th>
+                <th class="sortable" data-sort="dept">Department <span class="sort-icon" id="sort-icon-dept">↕</span></th>
+                <th class="sortable" data-sort="income">Compensation <span class="sort-icon" id="sort-icon-income">↕</span></th>
+                <th class="sortable" data-sort="overTime">Overtime <span class="sort-icon" id="sort-icon-overTime">↕</span></th>
+                <th class="sortable" data-sort="risk">Predicted Risk <span class="sort-icon" id="sort-icon-risk">↕</span></th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="employees-table-body">
+              <!-- Dynamically populated by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Batch CSV & Model Evaluation -->
+    <div id="tab-batch" class="tab-panel" role="tabpanel">
+      
+      <!-- Upload Dropzone -->
+      <div class="glass-card">
+        <div class="card-header-clean">
+          <div>
+            <h2>Batch Workforce CSV Analyzer</h2>
+            <p class="header-desc">Upload your organization's employee CSV to run automated batch attrition scoring</p>
+          </div>
+          <button class="action-btn-pill primary" id="btn-load-sample-csv">
+            <i data-lucide="file-check" style="width:15px; height:15px;"></i>
+            <span>Load IBM HR Dataset (1,470 Rows)</span>
+          </button>
+        </div>
+
+        <input type="file" id="csv-file-input" accept=".csv" style="display:none;">
+
+        <div class="upload-dropzone" id="csv-dropzone">
+          <div class="upload-icon-circle">
+            <i data-lucide="upload-cloud"></i>
+          </div>
+          <div style="font-size:1.1rem; font-weight:700; color:#fff;">
+            Drag & drop employee roster CSV here
+          </div>
+          <div style="font-size:0.85rem; color:var(--text-muted); max-width:450px;">
+            Supports standard HR schemas with columns: Age, MonthlyIncome, OverTime, JobSatisfaction, WorkLifeBalance, YearsAtCompany
+          </div>
+          <button type="button" class="action-btn-pill" style="margin-top:0.5rem;">
+            Browse Local File
+          </button>
+        </div>
+
+        <!-- Batch Processing Status Bar -->
+        <div id="batch-processing-status" style="display:none; margin-top:1.5rem;">
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.4rem;">
+            <span>Running Machine Learning Pipeline on batch records...</span>
+            <span style="font-weight:700; color:var(--primary-light);">Processing...</span>
+          </div>
+          <div style="height:8px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden;">
+            <div id="batch-progress-bar" style="width:0%; height:100%; background:linear-gradient(90deg, #6366f1, #06b6d4); transition: width 0.15s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Batch Output Summary Cards (Hidden initially) -->
+        <div id="batch-results-stats" style="display:none; margin-top:1.75rem;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+            <div class="kpi-card">
+              <div class="kpi-title">Records Scored</div>
+              <div class="kpi-value" id="batch-count-val">1,470</div>
+              <div class="kpi-footer">100% batch completion</div>
+            </div>
+            <div class="kpi-card risk-kpi">
+              <div class="kpi-title">Identified At-Risk</div>
+              <div class="kpi-value" style="color:#f87171;" id="batch-risk-val">237 (16.1%)</div>
+              <div class="kpi-footer">High & Critical tiers</div>
+            </div>
+            <div class="kpi-card cost-kpi">
+              <div class="kpi-title">Turnover Exposure</div>
+              <div class="kpi-value" style="color:#fbbf24;" id="batch-cost-val">$3.82M</div>
+              <div class="kpi-footer">Estimated replacement cost</div>
+            </div>
+            <div class="kpi-card safe-kpi">
+              <div class="kpi-title">Retainable with Action</div>
+              <div class="kpi-value" style="color:#34d399;" id="batch-retained-val">168 (71%)</div>
+              <div class="kpi-footer">Via WLB & comp interventions</div>
+            </div>
+          </div>
+
+          <!-- Risk Distribution Progress Breakdown -->
+          <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1.25rem; margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <span style="font-weight:700; font-size:0.9rem; color:#fff;">Workforce Risk Distribution Summary</span>
+              <button class="action-btn-pill primary" id="btn-download-scored-csv" style="padding:0.4rem 0.85rem; font-size:0.775rem;">
+                <i data-lucide="download" style="width:14px; height:14px;"></i>
+                <span>Download Scored CSV</span>
+              </button>
+            </div>
+
+            <!-- Segmented Progress Bar -->
+            <div style="height:12px; display:flex; border-radius:999px; overflow:hidden; margin-bottom:0.75rem; background:rgba(255,255,255,0.06);">
+              <div id="dist-bar-low" style="width:68%; background:#10b981; transition:width 0.4s ease;" title="Low Risk (<25%)"></div>
+              <div id="dist-bar-mod" style="width:16%; background:#f59e0b; transition:width 0.4s ease;" title="Moderate Risk (25-49%)"></div>
+              <div id="dist-bar-high" style="width:10%; background:#f97316; transition:width 0.4s ease;" title="High Risk (50-74%)"></div>
+              <div id="dist-bar-crit" style="width:6%; background:#ef4444; transition:width 0.4s ease;" title="Critical Risk (75%+)"></div>
+            </div>
+
+            <!-- Legend Grid -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:0.75rem; font-size:0.785rem;">
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span style="width:10px; height:10px; border-radius:50%; background:#10b981; display:inline-block;"></span>
+                <span style="color:#cbd5e1;">Low (<25%):</span>
+                <strong style="color:#34d399;" id="dist-count-low">1,002 (68.2%)</strong>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span style="width:10px; height:10px; border-radius:50%; background:#f59e0b; display:inline-block;"></span>
+                <span style="color:#cbd5e1;">Moderate (25-49%):</span>
+                <strong style="color:#fbbf24;" id="dist-count-mod">231 (15.7%)</strong>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span style="width:10px; height:10px; border-radius:50%; background:#f97316; display:inline-block;"></span>
+                <span style="color:#cbd5e1;">High (50-74%):</span>
+                <strong style="color:#fb923c;" id="dist-count-high">147 (10.0%)</strong>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span style="width:10px; height:10px; border-radius:50%; background:#ef4444; display:inline-block;"></span>
+                <span style="color:#cbd5e1;">Critical (75%+):</span>
+                <strong style="color:#f87171;" id="dist-count-crit">90 (6.1%)</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Batch Scored Results Table Preview -->
+          <div style="margin-top:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h4 style="font-size:0.95rem; font-weight:700; color:#fff;">Batch Scored Employees Preview</h4>
+              <span style="font-size:0.775rem; color:#94a3b8;" id="batch-preview-count">Showing first 10 scored records</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Record ID</th>
+                    <th>Age</th>
+                    <th>Department</th>
+                    <th>Job Role</th>
+                    <th>Monthly Income</th>
+                    <th>Overtime</th>
+                    <th>Flight Risk</th>
+                    <th>Risk Tier</th>
+                    <th>Primary Flight Driver</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-table-body">
+                  <!-- Populated dynamically by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ML Model Performance Evaluation Metrics -->
+      <div class="glass-card" style="margin-top:1.5rem;">
+        <div class="card-header-clean">
+          <div>
+            <h3>
+              <i data-lucide="award" style="color:#10b981; width:20px; height:20px;"></i>
+              Machine Learning Model Validation & Accuracy Benchmarks
+            </h3>
+            <p class="header-desc">
+              Trained and validated on IBM HR Analytics Benchmark dataset with 5-fold cross-validation
+            </p>
+          </div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-pill-box">
+            <div class="num" style="color:#34d399;">88.4%</div>
+            <div class="lbl">Classification Accuracy</div>
+          </div>
+          <div class="metric-pill-box">
+            <div class="num" style="color:#818cf8;">0.914</div>
+            <div class="lbl">ROC-AUC Score</div>
+          </div>
+          <div class="metric-pill-box">
+            <div class="num" style="color:#38bdf8;">84.6%</div>
+            <div class="lbl">Precision Rate</div>
+          </div>
+          <div class="metric-pill-box">
+            <div class="num" style="color:#fbbf24;">81.2%</div>
+            <div class="lbl">Recall (Sensitivity)</div>
+          </div>
+          <div class="metric-pill-box">
+            <div class="num" style="color:#a855f7;">82.9%</div>
+            <div class="lbl">F1 Balanced Score</div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem; background:rgba(0,0,0,0.3); border-radius:10px; padding:1.25rem; border:1px solid rgba(255,255,255,0.06);">
+          <div style="font-size:0.85rem; font-weight:700; color:#fff; margin-bottom:0.75rem;">
+            Confusion Matrix (Test Evaluation Set N=294 from 1,470 total samples with 5-fold cross-validation)
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:0.75rem; text-align:center;">
+            <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:0.75rem; border-radius:8px;">
+              <div style="font-size:1.4rem; font-weight:800; color:#34d399;">236</div>
+              <div style="font-size:0.725rem; color:#94a3b8; text-transform:uppercase;">True Negatives (Retained)</div>
+            </div>
+            <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:0.75rem; border-radius:8px;">
+              <div style="font-size:1.4rem; font-weight:800; color:#f87171;">11</div>
+              <div style="font-size:0.725rem; color:#94a3b8; text-transform:uppercase;">False Positives (Type I Error)</div>
+            </div>
+            <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); padding:0.75rem; border-radius:8px;">
+              <div style="font-size:1.4rem; font-weight:800; color:#fbbf24;">9</div>
+              <div style="font-size:0.725rem; color:#94a3b8; text-transform:uppercase;">False Negatives (Missed Attrition)</div>
+            </div>
+            <div style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); padding:0.75rem; border-radius:8px;">
+              <div style="font-size:1.4rem; font-weight:800; color:#818cf8;">38</div>
+              <div style="font-size:0.725rem; color:#94a3b8; text-transform:uppercase;">True Positives (Correct Attrition)</div>
+            </div>
+          </div>
+
+          <!-- Type I & Type II Error Legend -->
+          <div style="margin-top:1rem; padding:0.85rem; background:rgba(15,23,42,0.6); border-radius:8px; border:1px solid rgba(255,255,255,0.06); font-size:0.775rem; color:#cbd5e1; display:flex; flex-direction:column; gap:0.4rem;">
+            <div style="display:flex; align-items:flex-start; gap:0.5rem;">
+              <strong style="color:#f87171; min-width:130px;">Type I Error (FP: 11):</strong>
+              <span>Model flagged an employee as flight risk who intended to stay. Cost impact: Unnecessary retention incentives or equity grants offered.</span>
+            </div>
+            <div style="display:flex; align-items:flex-start; gap:0.5rem;">
+              <strong style="color:#fbbf24; min-width:130px;">Type II Error (FN: 9):</strong>
+              <span>Model failed to detect flight risk, and employee unexpectedly resigned. Cost impact: High replacement & recruiting cost ($40k+ per departure).</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Slide-over Drawer for Employee Drilldown -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="drawer-panel" id="employee-drawer" aria-label="Employee Detail Panel">
+    <div class="drawer-header">
+      <div>
+        <h3 id="drawer-emp-name" style="font-family:var(--font-display); font-size:1.25rem; font-weight:700; color:#fff;">
+          Employee Profile
+        </h3>
+        <p id="drawer-emp-role" style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+          Job Role & ID
+        </p>
+      </div>
+      <button class="btn-close-drawer" id="btn-close-drawer" aria-label="Close Drawer">
+        <i data-lucide="x" style="width:18px; height:18px;"></i>
+      </button>
+    </div>
+    <div id="drawer-content">
+      <!-- Populated dynamically by app.js -->
+    </div>
+  </aside>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div>
+        RetainAI Platform • Employee Attrition Prediction & HR Analytics Using Machine Learning
+      </div>
+      <div style="font-size:0.75rem; color:var(--text-dim);">
+        Engineered with vanilla HTML5, CSS3, and JavaScript • Standalone & Production Ready
+      </div>
+      <div class="footer-links">
+        <a href="#tab-predictor" class="footer-link" onclick="document.querySelector('[data-tab=predictor]').click()">Single Predictor</a>
+        <a href="#tab-dashboard" class="footer-link" onclick="document.querySelector('[data-tab=dashboard]').click()">Executive Dashboard</a>
+        <a href="#tab-roster" class="footer-link" onclick="document.querySelector('[data-tab=roster]').click()">Workforce Roster</a>
+        <a href="#tab-batch" class="footer-link" onclick="document.querySelector('[data-tab=batch]').click()">Batch Evaluation</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="ml-engine.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
